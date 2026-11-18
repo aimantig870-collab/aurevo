@@ -7,14 +7,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:unit": "node --test tests/validation.test.ts",
+    "test:unit": "node --test tests/validation.test.ts tests/menu-ar.test.ts",
     "test:db": "node tests/db.test.mjs",
     "test:e2e": "node tests/e2e.cjs",
     "test": "npm run test:unit && npm run test:db",
     "art": "node scripts/generate-art.mjs",
     "seed:build": "node scripts/build-seed.mjs",
     "typecheck": "tsc --noEmit",
-    "kit": "node scripts/build-kit.mjs && python3 scripts/make-xlsx.py"
+    "kit": "node scripts/build-kit.mjs && python3 scripts/make-xlsx.py",
+    "kit:ar": "node scripts/build-kit-ar.mjs && python3 scripts/make-xlsx-ar.py"
   },
   "dependencies": {
     "@fontsource-variable/hanken-grotesk": "^5.3.0",
@@ -30,6 +31,10 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.16",
+    "@fontsource/amiri": "^5.3.0",
+    "@fontsource/cairo": "^5.3.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "@fontsource/reem-kufi": "^5.3.0",
     "@tailwindcss/turbopack": "4.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
