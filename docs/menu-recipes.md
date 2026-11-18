@@ -439,8 +439,8 @@ A tableside dessert: bean-flecked vanilla gelato, a double espresso poured over,
 
 | Category | Item | Size | Est. cost | Price | Margin |
 |---|---|---|---|---|---|
-| Espresso | Espresso | 2 oz / 60 ml | $0.48 | $3.20 | 85% |
-| Espresso | Doppio | 3 oz / 90 ml | $0.50 | $3.90 | 87.2% |
+| Espresso | Espresso | 2 oz / 60 ml | $0.25 | $3.20 | 92.2% |
+| Espresso | Doppio | 3 oz / 90 ml | $0.45 | $3.90 | 88.5% |
 | Espresso | Cortado | 4 oz / 120 ml | $0.74 | $4.20 | 82.4% |
 | Americano | Americano | 12 oz / 355 ml | $0.52 | $3.80 | 86.3% |
 | Americano | Long Black | 8 oz / 240 ml | $0.52 | $3.90 | 86.7% |
