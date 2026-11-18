@@ -10,7 +10,7 @@ Node 20.19+ (tested on 22). Without Supabase variables the public site works fro
 
 ## 2. Supabase setup (use a **new, dedicated project**)
 1. Create a project at supabase.com (choose the region closest to your customers).
-2. **SQL Editor →** run `supabase/migrations/0001_init.sql`, then `supabase/seed.sql`. (Or with the CLI: `supabase link --project-ref <ref> && supabase db push`.)
+2. **SQL Editor →** run `supabase/migrations/0001_init.sql`, then `0002_private_helpers.sql`, then `supabase/seed.sql`. (Or with the CLI: `supabase link --project-ref <ref> && supabase db push`.)
 3. **Authentication → Providers:** keep Email enabled; **disable public sign-ups** (Authentication → Sign In / Providers → "Allow new users to sign up" off) so only invited staff can exist. Set a strong password policy and enable MFA if your plan allows.
 4. **Authentication → Users → Add user** (email + password) for each staff member. They start as *viewer*.
 5. Promote the first admin in the SQL Editor:
@@ -61,3 +61,7 @@ Node 20.19+ (tested on 22). Without Supabase variables the public site works fro
 - **Dependencies:** monthly `npm outdated`, `npm audit`; rerun the test suite.
 - **Monitoring:** Vercel logs/Analytics, Supabase logs + advisors. Review `/admin/activity` for unexpected changes.
 - **Rotating access:** remove leavers in Supabase → Authentication → Users; rotate the anon key only if abused (it is public by design; RLS is the protection).
+
+## 7. Testing against a live Supabase project
+`tests/live-anon.test.mjs` and `tests/admin.e2e.cjs` run against a real project. They need three staff accounts (`qa-admin@`, `qa-editor@`, `qa-viewer@<domain>`) with matching roles — create them in a **test/staging** project, not production — and `QA_PASSWORD`. The public e2e and admin e2e write test rows (contact messages etc.); clean them with `delete from contact_messages where email like 'qa-%' or email like 'test@%';` (and the same for the other inquiry tables).
+In restricted sandboxes where Node's `fetch` ignores the HTTP proxy, set `NODE_USE_ENV_PROXY=1` (not needed on Vercel).

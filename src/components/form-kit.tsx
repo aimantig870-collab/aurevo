@@ -1,14 +1,29 @@
 "use client";
-import { useActionState, useEffect, type ReactNode } from "react";
+import { startTransition, useActionState, useEffect, useRef, type FormEvent, type ReactNode } from "react";
 import { toast } from "sonner";
 import type { FormState } from "@/lib/validation";
 
 type Action = (prev: FormState, fd: FormData) => Promise<FormState>;
 
+/**
+ * Wraps a server action for use with <form onSubmit={run}>.
+ * We deliberately avoid <form action={...}>: React 19 resets uncontrolled fields after an action completes,
+ * which would wipe everything the user typed when validation fails. Creation forms (no hidden `id`) are
+ * cleared manually on success.
+ */
 export function useFormAction(action: Action) {
-  const [state, run, pending] = useActionState(action, {} as FormState);
+  const [state, dispatch, pending] = useActionState(action, {} as FormState);
+  const form = useRef<HTMLFormElement | null>(null);
+  const run = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    form.current = e.currentTarget;
+    const fd = new FormData(e.currentTarget);
+    startTransition(() => dispatch(fd));
+  };
   useEffect(() => {
     if (state.message) (state.ok ? toast.success : toast.error)(state.message);
+    const f = form.current;
+    if (state.ok && f && f.isConnected && !f.elements.namedItem("id")) f.reset();
   }, [state]);
   return { state, run, pending };
 }

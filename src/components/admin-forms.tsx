@@ -11,7 +11,7 @@ export function ProductForm({ p, categories, readOnly }: { p: ProductRow; catego
   const e = state.errors;
   const d = (k: string) => (p[k] ?? "") as string;
   return (
-    <form action={run} className="grid gap-6" noValidate>
+    <form onSubmit={run} className="grid gap-6" noValidate>
       {p.id && <input type="hidden" name="id" value={p.id} />}
       <fieldset disabled={readOnly || pending} className="grid gap-6">
         <div className="grid gap-5 sm:grid-cols-2">
@@ -59,7 +59,7 @@ export function CategoryForm({ c, readOnly }: { c?: { id: string; name: string; 
   const { state, run, pending } = useFormAction(saveCategory);
   const e = state.errors;
   return (
-    <form action={run} className="grid gap-3 rounded-2xl border border-night/10 p-4 md:grid-cols-[1.2fr_1.2fr_2fr_6rem_auto_auto] md:items-start" noValidate>
+    <form onSubmit={run} className="grid gap-3 rounded-2xl border border-night/10 p-4 md:grid-cols-[1.2fr_1.2fr_2fr_6rem_auto_auto] md:items-start" noValidate>
       {c && <input type="hidden" name="id" value={c.id} />}
       <fieldset disabled={readOnly || pending} className="contents">
         <Field htmlFor={`name-${c?.id ?? "new"}`} label="Name" name="name" error={e?.name}><input {...inputProps("name", e)} id={`name-${c?.id ?? "new"}`} defaultValue={c?.name} required /></Field>
@@ -78,7 +78,7 @@ export function GalleryForm({ g, readOnly }: { g?: { id: string; title: string; 
   const e = state.errors;
   const k = g?.id ?? "new";
   return (
-    <form action={run} className="grid gap-3" noValidate>
+    <form onSubmit={run} className="grid gap-3" noValidate>
       {g && <input type="hidden" name="id" value={g.id} />}
       <fieldset disabled={readOnly || pending} className="grid gap-3">
         {g && <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-oat"><Image src={g.image_url} alt={g.title} fill sizes="320px" className="object-cover" /></div>}
@@ -107,7 +107,7 @@ export function SettingsForm({ values, readOnly }: { values: Record<string, stri
   const { state, run, pending } = useFormAction(saveSettings);
   const e = state.errors;
   return (
-    <form action={run} className="grid max-w-3xl gap-5" noValidate>
+    <form onSubmit={run} className="grid max-w-3xl gap-5" noValidate>
       <fieldset disabled={readOnly || pending} className="grid gap-5">
         {SETTINGS.map(([k, l, long]) => (
           <Field key={k} label={l} name={k} error={e?.[k]}>{long ? <textarea {...inputProps(k, e)} rows={3} defaultValue={values[k]} /> : <input {...inputProps(k, e)} defaultValue={values[k]} />}</Field>
@@ -121,7 +121,7 @@ export function SettingsForm({ values, readOnly }: { values: Record<string, stri
 export function InquiryEditor({ kind, id, status, notes, readOnly }: { kind: string; id: string; status: string; notes: string; readOnly: boolean }) {
   const { state, run, pending } = useFormAction(updateInquiry);
   return (
-    <form action={run} className="grid gap-4">
+    <form onSubmit={run} className="grid gap-4">
       <input type="hidden" name="kind" value={kind} /><input type="hidden" name="id" value={id} />
       <fieldset disabled={readOnly || pending} className="grid gap-4">
         <Field label="Status" name="status" error={state.errors?.status}><select {...inputProps("status", state.errors)} defaultValue={status}>{["new", "in_review", "contacted", "closed", "spam"].map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}</select></Field>

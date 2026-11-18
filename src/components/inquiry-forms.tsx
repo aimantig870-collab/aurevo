@@ -7,7 +7,7 @@ export function ContactForm() {
   const e = state.errors;
   if (state.ok) return <Done state={state} />;
   return (
-    <form action={run} className="relative grid gap-5" noValidate>
+    <form onSubmit={run} className="relative grid gap-5" noValidate>
       <Honeypot />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Name" name="name" error={e?.name}><input {...inputProps("name", e)} autoComplete="name" required /></Field>
@@ -25,7 +25,7 @@ export function PartnershipForm() {
   const e = state.errors;
   if (state.ok) return <Done state={state} />;
   return (
-    <form action={run} className="relative grid gap-5" noValidate>
+    <form onSubmit={run} className="relative grid gap-5" noValidate>
       <Honeypot />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Name" name="name" error={e?.name}><input {...inputProps("name", e)} autoComplete="name" required /></Field>
@@ -54,7 +54,7 @@ export function FranchiseForm() {
   const e = state.errors;
   if (state.ok) return <Done state={state} />;
   return (
-    <form action={run} className="relative grid gap-5" noValidate>
+    <form onSubmit={run} className="relative grid gap-5" noValidate>
       <Honeypot />
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Name" name="name" error={e?.name}><input {...inputProps("name", e)} autoComplete="name" required /></Field>

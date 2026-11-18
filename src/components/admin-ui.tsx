@@ -37,7 +37,7 @@ export function AdminNav({ items }: { items: { href: string; label: string; badg
 export function LoginForm({ next, error }: { next?: string; error?: string }) {
   const { state, run, pending } = useFormAction(signIn);
   return (
-    <form action={run} className="grid gap-5" noValidate>
+    <form onSubmit={run} className="grid gap-5" noValidate>
       <input type="hidden" name="next" value={next ?? "/admin"} />
       {error === "config" && <p role="alert" className="rounded-xl bg-ember/10 p-3 text-sm text-ember">Supabase is not configured — set the environment variables first.</p>}
       <Field label="Email" name="email"><input {...inputProps("email")} type="email" autoComplete="username" required /></Field>

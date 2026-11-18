@@ -7,7 +7,7 @@ A complete **brand + digital platform** for an original, premium virtual café: 
 ## Quick start
 ```bash
 npm install && npm run dev     # works without Supabase (bundled seed data)
-npm test                       # unit + database/RLS tests
+npm test                       # unit + database/RLS tests (no network needed)
 npm run build && npm start     # then: BASE=http://localhost:3000 npm run test:e2e
 ```
 Deployment, Supabase setup, backups and the production checklist: **[docs/deployment.md](docs/deployment.md)**.
@@ -26,12 +26,13 @@ src/
                      admin/{auth,actions,inbox}.ts, supabase/{public,server}.ts
   data/              menu.ts (41 products, recipes, costs) · brand.ts (palette, personas, names)
   proxy.ts           session refresh + /admin gate
-supabase/            migrations/0001_init.sql · seed.sql (generated)
+supabase/            migrations/0001_init.sql · 0002_private_helpers.sql · seed.sql (generated)
 scripts/             generate-art.mjs · build-seed.mjs · make-og.cjs
 public/art/          logos, 41 drink illustrations, 11 mockups, 6 café scenes, icons
 docs/                ROADMAP · brand-strategy · menu-recipes · photography-direction · marketing-strategy
                      content-calendar (30 days) · business-model · franchise-framework · deployment
-tests/               validation.test.ts · db.test.mjs · e2e.cjs
+tests/               validation.test.ts · db.test.mjs (local Postgres) · e2e.cjs (public site)
+                     live-anon.test.mjs · admin.e2e.cjs (need a live Supabase project)
 ```
 
 ## Features

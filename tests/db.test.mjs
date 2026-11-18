@@ -16,6 +16,7 @@ grant usage on schema auth, storage to anon, authenticated;
 grant execute on function auth.uid() to anon, authenticated;
 `);
 await db.exec(readFileSync(root + "migrations/0001_init.sql", "utf8"));
+await db.exec(readFileSync(root + "migrations/0002_private_helpers.sql", "utf8"));
 await db.exec(readFileSync(root + "seed.sql", "utf8"));
 const n = async (t) => (await db.query(`select count(*)::int c from public.${t}`)).rows[0].c;
 console.log("products", await n("products"), "categories", await n("categories"), "images", await n("product_images"), "gallery", await n("gallery"), "settings", await n("brand_settings"));

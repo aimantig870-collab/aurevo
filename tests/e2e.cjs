@@ -56,6 +56,11 @@ const ok = (name, cond, extra = "") => { if (!cond) failed++; console.log(cond ?
   ok("contact submit gives user feedback", true);
   // franchise acknowledgement required
   await p.goto(BASE + "/franchise", { waitUntil: "networkidle" });
+  // regression: a validation error must NOT wipe what the user typed (React 19 resets <form action> fields)
+  await p.fill("#name", "Keep Me"); await p.fill("#email", "keep@example.com"); await p.fill("#country", "Keepland");
+  await p.getByRole("button", { name: "Register interest" }).click(); // ack unticked → validation error
+  await p.waitForSelector("[role=alert]");
+  ok("failed validation preserves typed values", (await p.inputValue("#name")) === "Keep Me" && (await p.inputValue("#email")) === "keep@example.com" && (await p.inputValue("#country")) === "Keepland");
   ok("franchise page states no franchise is available", (await p.getByText("No franchise is currently for sale").count()) > 0);
   // admin gating
   const r = await p.goto(BASE + "/admin/products", { waitUntil: "networkidle" });
