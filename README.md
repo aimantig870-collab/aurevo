@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aurevo — Golden Hour Coffee House (concept)
 
-## Getting Started
+A complete **brand + digital platform** for an original, premium virtual café: strategy, identity, 41-item menu with 14 signature recipes, a 12-page website, a role-based admin dashboard on Supabase, marketing plan, financial model and franchise framework.
 
-First, run the development server:
+> **Honesty notice.** Aurevo is a *concept*. There is no operating café, no sales history, no validated franchise. **All recipes are proposed/untested; all prices, costs and financial figures are estimates.** The name is **not** trademark-cleared. Visuals are vector concept art, not photographs.
 
+## Quick start
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install && npm run dev     # works without Supabase (bundled seed data)
+npm test                       # unit + database/RLS tests
+npm run build && npm start     # then: BASE=http://localhost:3000 npm run test:e2e
+```
+Deployment, Supabase setup, backups and the production checklist: **[docs/deployment.md](docs/deployment.md)**.
+
+## Technologies
+Next.js 16 (App Router, React 19, TypeScript) · Tailwind CSS 4 · Supabase (Postgres, Auth, Storage, RLS) via `@supabase/ssr` · Zod validation · Sonner toasts · Fontsource (self-hosted Instrument Serif + Hanken Grotesk) · Vercel hosting. Dev: PGlite (in-process Postgres for tests), Playwright. Runtime dependencies: 7.
+
+## Project structure
+```
+src/
+  app/(site)/        12 public pages: / about our-story menu menu/[slug] signature gallery virtual-cafe brand franchise partnership contact
+  app/admin/         dashboard, products(+[id]), categories, gallery, settings, inbox/[kind](+[id]), team, activity
+  app/login/         staff sign-in            app/{sitemap,robots,not-found,error}
+  components/        site chrome, forms, menu explorer, gallery, admin UI
+  lib/               data.ts (Supabase↔seed), validation.ts (zod), public-actions.ts,
+                     admin/{auth,actions,inbox}.ts, supabase/{public,server}.ts
+  data/              menu.ts (41 products, recipes, costs) · brand.ts (palette, personas, names)
+  proxy.ts           session refresh + /admin gate
+supabase/            migrations/0001_init.sql · seed.sql (generated)
+scripts/             generate-art.mjs · build-seed.mjs · make-og.cjs
+public/art/          logos, 41 drink illustrations, 11 mockups, 6 café scenes, icons
+docs/                ROADMAP · brand-strategy · menu-recipes · photography-direction · marketing-strategy
+                     content-calendar (30 days) · business-model · franchise-framework · deployment
+tests/               validation.test.ts · db.test.mjs · e2e.cjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
+- **Public:** premium responsive site; searchable/filterable menu; product detail with recipe, cost, margin (labelled estimates); gallery with lightbox; virtual-café tour; full brand guidelines page; honest franchise & partnership pages; working contact / partnership / franchise forms (server-validated, honeypot, throttle); SEO metadata, sitemap, robots, OG image, security headers, skip link, reduced-motion support.
+- **Admin:** email/password auth; roles (admin/editor/viewer); CRUD for products (multi-image upload, primary image), categories, gallery, site content; inbox for 3 inquiry types with search, status filter, pagination, notes; team/role management; audit log; toasts and server-side validation everywhere.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Database (Supabase / Postgres)
+`profiles` · `categories` · `products` · `product_images` · `gallery` · `brand_settings` · `partnership_requests` · `franchise_inquiries` · `contact_messages` · `admin_activity_logs` — with FKs, CHECK constraints, indexes, `updated_at` triggers, role-guard trigger, RLS on every table, storage bucket policies. Visitors can only INSERT inquiries (status forced to `new`); staff read; editors update; admins delete.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Security notes
+Admin routes gated twice (proxy + server-side role check in every page/action) · all writes validated by Zod on the server · HTML stripped from free text, React escapes output · RLS is the final authority · **no service-role key exists in the project** · `.env*` git-ignored, `.env.example` provided · uploads restricted by type (JPG/PNG/WebP/AVIF) and 5 MB · privilege-escalation trigger blocks self-promotion · CSP not yet configured (see remaining tasks).
 
-## Learn More
+## Testing results (this build)
+| Suite | Result |
+|---|---|
+| `tsc` typecheck, `eslint` | clean |
+| `npm run test:unit` — validation/sanitisation | **7/7 pass** |
+| `npm run test:db` — migration + seed + 18 RLS/role/constraint checks on in-process Postgres | **all pass** |
+| `npm run test:e2e` — 12 pages × desktop+mobile (200, one h1, no overflow, alt text, no console errors), menu filter/search, form validation + feedback, admin gating, headers, robots, sitemap | **109/109 pass** |
+| `next build` | 58 static pages, no errors |
 
-To learn more about Next.js, take a look at the following resources:
+**Not tested:** the admin UI and the real Supabase Auth/Storage/PostgREST path against a live project (none was provisioned: the only existing project holds another app's `products` table, so migrations were deliberately not applied). RLS logic *is* tested on Postgres, but the first live run may surface integration issues — follow the production checklist and click through each admin screen once.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Remaining tasks
+1. Provision a dedicated Supabase project, apply migration + seed, create/promote staff, click-test the admin end-to-end; add Playwright admin tests against it.
+2. Official trademark searches + legal advice; secure domains/handles.
+3. Bench-test all 14 signatures (+ classics); replace estimated costs with supplier quotes; update recipe status in admin.
+4. Commission real photography / photoreal renders (prompts ready) to replace concept art; produce print-ready dielines.
+5. Email notifications for new inquiries (e.g. Supabase Database Webhook → Resend); CAPTCHA/Turnstile if spam appears; edge rate limiting.
+6. Add Content-Security-Policy header; privacy policy/cookie notice before analytics.
+7. Pilot café/pop-up to generate real data before any franchise language changes.
