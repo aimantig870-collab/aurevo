@@ -108,11 +108,13 @@ async function login(b, role, pw = PW) {
   await p.getByRole("button", { name: "Add to gallery" }).click();
   ok("gallery item added (toast)", await toast(p, /Gallery item saved/));
   await p.goto(BASE + `/admin/gallery?q=QA+Gallery+${stamp}`, { waitUntil: "domcontentloaded" });
-  ok("gallery search finds it", (await p.locator('input[value^="QA Gallery"]').count()) === 1);
+  const qaGallery = () => p.evaluate(() => [...document.querySelectorAll('input[id^="t-"]')].filter((i) => i.value.startsWith("QA Gallery")).length);
+  ok("gallery search finds it", (await qaGallery()) === 1);
   p.once("dialog", (d) => d.accept());
   await p.getByRole("button", { name: "Delete", exact: true }).first().click();
-  await p.waitForTimeout(1500); await p.reload({ waitUntil: "domcontentloaded" });
-  ok("gallery item deleted", (await p.locator('input[value^="QA Gallery"]').count()) === 0);
+  let left = 1;
+  for (let i = 0; i < 12 && left; i++) { await p.waitForTimeout(1500); await p.reload({ waitUntil: "domcontentloaded" }); left = await qaGallery(); }
+  ok("gallery item deleted", left === 0);
 
   // ---------- settings (restore after)
   await p.goto(BASE + "/admin/settings", { waitUntil: "domcontentloaded" });
