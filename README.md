@@ -50,14 +50,19 @@ Admin routes gated twice (proxy + server-side role check in every page/action) �
 |---|---|
 | `tsc` typecheck, `eslint` | clean |
 | `npm run test:unit` — validation/sanitisation | **7/7 pass** |
-| `npm run test:db` — migration + seed + 18 RLS/role/constraint checks on in-process Postgres | **all pass** |
-| `npm run test:e2e` — 12 pages × desktop+mobile (200, one h1, no overflow, alt text, no console errors), menu filter/search, form validation + feedback, admin gating, headers, robots, sitemap | **109/109 pass** |
+| `npm run test:db` — migrations + seed + 18 RLS/role/constraint checks (local Postgres) | **all pass** |
+| `npm run test:e2e` — 12 pages × desktop+mobile, menu filter/search, forms, admin gating, headers, SEO files, form-value-preservation regression | **110/110 pass** |
+| `tests/live-anon.test.mjs` — anonymous visitor vs. a **live Supabase project** (reads, blocked writes/RPC/storage) | **12/12 pass** |
+| `tests/admin.e2e.cjs` — admin dashboard on a **live Supabase project**: login, product/category/gallery CRUD, Storage image upload, settings → public site, inbox, roles, audit log, admin/editor/viewer restrictions | **49/49 pass** |
+| Supabase security advisor (live project) | **0 findings** |
 | `next build` | 58 static pages, no errors |
 
-**Not tested:** the admin UI and the real Supabase Auth/Storage/PostgREST path against a live project (none was provisioned: the only existing project holds another app's `products` table, so migrations were deliberately not applied). RLS logic *is* tested on Postgres, but the first live run may surface integration issues — follow the production checklist and click through each admin screen once.
+Bugs found by the live tests and fixed: React 19 `<form action>` wiped typed values after a validation error (now `onSubmit` + transition, regression-tested); role-helper functions were callable through the public API (moved to a private schema, migration 0002).
+
+**Limits:** live tests ran against one project from a sandbox whose proxy adds latency, so admin pages looked slow (~3 s); expect far less on Vercel↔Supabase. Not yet done: a real Vercel deployment, email notifications, and load/penetration testing.
 
 ## Remaining tasks
-1. Provision a dedicated Supabase project, apply migration + seed, create/promote staff, click-test the admin end-to-end; add Playwright admin tests against it.
+1. Create your real staff accounts in Supabase (Authentication → Users), promote the first admin (see docs/deployment.md), disable public sign-ups.
 2. Official trademark searches + legal advice; secure domains/handles.
 3. Bench-test all 14 signatures (+ classics); replace estimated costs with supplier quotes; update recipe status in admin.
 4. Commission real photography / photoreal renders (prompts ready) to replace concept art; produce print-ready dielines.
