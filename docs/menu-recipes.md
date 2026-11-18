@@ -38,7 +38,7 @@ A silky latte sweetened with saffron-steeped honey and finished with pistachio d
 ### First Light
 *Espresso over yuzu tonic — a sparkling sunrise.*
 
-Bright, citrusy and bubbly: chilled espresso poured over yuzu-honey tonic so the drink shifts from amber to gold as you sip.
+Bright, citrusy and bubbly: a freshly pulled espresso shot poured over yuzu-honey tonic so the drink shifts from amber to gold as you sip.
 
 | | |
 |---|---|
@@ -213,7 +213,7 @@ A small, polished cortado scented with orange blossom — fragrant, balanced, an
 - Double espresso — 36 ml
 - Steamed whole milk — 90 ml
 - Orange blossom honey — 8 g
-- Orange blossom water — 0.5 ml (≈ 2 drops)
+- Orange blossom water — 0.5 ml (≈ 10 drops)
 - Orange zest — 1 twist
 
 **Method**

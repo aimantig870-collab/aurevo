@@ -87,7 +87,7 @@ export const signature: Product[] = [
   {
     slug: "first-light", name: "First Light", category: S, tier: "signature", serve: "iced",
     tagline: "Espresso over yuzu tonic — a sparkling sunrise.",
-    description: "Bright, citrusy and bubbly: chilled espresso poured over yuzu-honey tonic so the drink shifts from amber to gold as you sip.",
+    description: "Bright, citrusy and bubbly: a freshly pulled espresso shot poured over yuzu-honey tonic so the drink shifts from amber to gold as you sip.",
     ingredients: [
       { item: "Espresso, shot (18 g in / 36 g out)", qty: "36 ml" },
       { item: "Tonic water", qty: "120 ml" },
@@ -218,7 +218,7 @@ export const signature: Product[] = [
       { item: "Double espresso", qty: "36 ml" },
       { item: "Steamed whole milk", qty: "90 ml" },
       { item: "Orange blossom honey", qty: "8 g" },
-      { item: "Orange blossom water", qty: "0.5 ml (≈ 2 drops)" },
+      { item: "Orange blossom water", qty: "0.5 ml (≈ 10 drops)" },
       { item: "Orange zest", qty: "1 twist" },
     ],
     method: [

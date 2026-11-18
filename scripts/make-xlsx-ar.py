@@ -76,7 +76,65 @@ for i, (k, f, fmt) in enumerate([
     s[f"B{i}"].number_format = fmt
     s[f"A{i}"].font = s[f"B{i}"].font = Font(name="Arial")
 s.column_dimensions["A"].width = 50; s.column_dimensions["B"].width = 16
-wb.move_sheet("الملخص", offset=-2)
+
+# ---------------- recipe validation log (3 trials per recipe, panel-average scores 1–5)
+from openpyxl.worksheet.datavalidation import DataValidation
+t = wb.create_sheet("سجل الاختبار")
+t.sheet_view.rightToLeft = True
+tcols = ["الصنف", "رقم التجربة", "التاريخ", "الباريستا", "العطر (1–5)", "التوازن (1–5)", "الحلاوة (1–5)", "القوام (1–5)", "المظهر (1–5)", "متوسط التقييم", "النتيجة", "زمن التحضير (دقيقة)", "التكلفة الفعلية (دولار)", "ملاحظات وتعديلات"]
+for j, c in enumerate(tcols, start=1):
+    cell = t.cell(row=1, column=j, value=c)
+    cell.font, cell.fill = hfont, hfill
+    cell.alignment = Alignment(wrap_text=True, vertical="center", horizontal="right")
+r0 = 2
+for r in rows:
+    for k in (1, 2, 3):
+        i = r0
+        vals = [r["name"], k, None, None, None, None, None, None, None,
+                f'=IF(COUNT(E{i}:I{i})=5,AVERAGE(E{i}:I{i}),"")',
+                f'=IF(J{i}="","",IF(AND(J{i}>=4,MIN(E{i}:I{i})>=3,OR(L{i}="",L{i}<=4)),"ناجحة","تحتاج تعديلاً"))',
+                None, None, None]
+        for j, v in enumerate(vals, start=1):
+            c = t.cell(row=i, column=j, value=v)
+            c.font = Font(name="Arial", color="0000FF") if j in (3, 4, 5, 6, 7, 8, 9, 12, 13, 14) else Font(name="Arial")
+            c.alignment = Alignment(vertical="top", horizontal="right", wrap_text=(j == 14))
+        t.cell(row=i, column=10).number_format = "0.00"
+        t.cell(row=i, column=13).number_format = '"$"#,##0.00'
+        t.cell(row=i, column=3).number_format = "yyyy-mm-dd"
+        r0 += 1
+tlast = r0 - 1
+dv = DataValidation(type="decimal", operator="between", formula1="1", formula2="5", allow_blank=True, showErrorMessage=True, error="أدخل رقماً من 1 إلى 5")
+t.add_data_validation(dv); dv.add(f"E2:I{tlast}")
+for j, w in enumerate([32, 11, 13, 14, 11, 11, 11, 11, 11, 13, 14, 14, 16, 50], start=1): t.column_dimensions[get_column_letter(j)].width = w
+t.row_dimensions[1].height = 36; t.freeze_panes = "C2"; t.auto_filter.ref = f"A1:N{tlast}"
+
+st = wb.create_sheet("حالة الاعتماد")
+st.sheet_view.rightToLeft = True
+for j, c in enumerate(["الصنف", "عدد التجارب المكتملة", "التجارب الناجحة", "متوسط التقييم", "الحالة"], start=1):
+    cell = st.cell(row=1, column=j, value=c); cell.font, cell.fill = hfont, hfill
+    cell.alignment = Alignment(horizontal="right", vertical="center", wrap_text=True)
+L = "'سجل الاختبار'"
+for i, r in enumerate(rows, start=2):
+    st.cell(row=i, column=1, value=r["name"]).font = Font(name="Arial")
+    st.cell(row=i, column=2, value=f"=COUNTIFS({L}!$A$2:$A${tlast},A{i},{L}!$J$2:$J${tlast},\">0\")")
+    st.cell(row=i, column=3, value=f"=COUNTIFS({L}!$A$2:$A${tlast},A{i},{L}!$K$2:$K${tlast},\"ناجحة\")")
+    st.cell(row=i, column=4, value=f"=IFERROR(AVERAGEIFS({L}!$J$2:$J${tlast},{L}!$A$2:$A${tlast},A{i}),\"\")")
+    st.cell(row=i, column=5, value=f'=IF(B{i}=0,"لم يبدأ",IF(AND(B{i}>=3,C{i}>=3),"جاهزة للاعتماد","قيد الاختبار"))')
+    st.cell(row=i, column=4).number_format = "0.00"
+    for j in range(2, 6): st.cell(row=i, column=j).alignment = Alignment(horizontal="right")
+n = len(rows) + 1
+st.cell(row=n + 2, column=1, value="إجمالي الجاهزة للاعتماد").font = Font(bold=True, name="Arial")
+st.cell(row=n + 2, column=2, value=f'=COUNTIF(E2:E{n},"جاهزة للاعتماد")')
+st.cell(row=n + 3, column=1, value="قيد الاختبار").font = Font(bold=True, name="Arial")
+st.cell(row=n + 3, column=2, value=f'=COUNTIF(E2:E{n},"قيد الاختبار")')
+st.cell(row=n + 4, column=1, value="لم يبدأ").font = Font(bold=True, name="Arial")
+st.cell(row=n + 4, column=2, value=f'=COUNTIF(E2:E{n},"لم يبدأ")')
+st.cell(row=n + 6, column=1, value="المعيار: 3 تجارب مكتملة على الأقل، كلها ناجحة (متوسط ≥ 4.0، ولا معيار أقل من 3، وزمن التحضير ≤ 4 دقائق). ثم اعتمد الوصفة في لوحة الإدارة.").font = Font(italic=True, name="Arial")
+st.column_dimensions["A"].width = 36
+for c in "BCDE": st.column_dimensions[c].width = 20
+st.freeze_panes = "B2"
+
+wb.move_sheet("الملخص", offset=-4)
 wb.active = 0
 out = os.path.join(kit, f"{slug}-menu-costing-ar.xlsx")
 wb.save(out)
